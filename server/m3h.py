@@ -1,9 +1,31 @@
 import socket
 import select
+import os
 
 IP = "localhost"
 Port = 5000
 StdDir = "Data/"
+
+def sendfile(form, s):
+    name = form[1]
+
+    size = int( form[2] )
+
+    f = open( StdDir + name, 'wb+')
+
+    s.send("ack".encode())
+
+    while(size > 0 ):
+
+        data = s.recv(1024)
+
+        f.write(data)
+
+        size -= len(data)
+
+        s.send("ack".encode())
+
+    f.close()
 
 def interface(s):
 
@@ -15,25 +37,9 @@ def interface(s):
 
         print("Client Send File")
 
-        name = form[1]
+        sendfile(form, s)
 
-        size = int( form[2] )
-
-        f = open( StdDir + name, 'wb+')
-
-        s.send("ack".encode())
-
-        while(size > 0 ):
-
-            data = s.recv(1024)
-
-            f.write(data)
-
-            size -= len(data)
-
-            s.send("ack".encode())
-
-        f.close()
+        print("Done Sending")
 
     else:
         
@@ -51,6 +57,11 @@ if __name__ == "__main__":
     socket_server.listen(10)
 
     ports = {}
+
+    # dirs #
+
+    if not os.path.exists(StdDir):
+        os.makedirs(StdDir)
 
     while True:
        

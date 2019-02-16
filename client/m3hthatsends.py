@@ -4,13 +4,8 @@ import os
 host = "localhost"
 port = 5000
 
-if __name__ == "__main__":
-
-    s = socket.socket()
-    s.connect((host, port))
-
-    name = input("file name: ")
-
+def sendfile(filename, s):
+    
     f = open(name, 'rb')
 
     size = os.stat(name).st_size
@@ -58,6 +53,17 @@ if __name__ == "__main__":
         os.system('setterm -cursor on')
 
     f.close()
-    
 
+
+if __name__ == "__main__":
+
+    s = socket.socket()
+    s.connect((host, port))
+
+    name = input("file name: ")
+
+    sendfile(name, s)
+
+    s.close()
+    
     pass
