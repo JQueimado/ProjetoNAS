@@ -3,18 +3,40 @@ import select
 
 IP = "localhost"
 Port = 5000
+StdDir = "Data/"
 
 def interface(s):
 
     msg = s.recv(1024).decode()
 
-    if( msg.startswith("sendfile") ):
+    form = msg.split(' ')
 
-        name = msg.remove("sendfile ")
+    if( form[0] == "sendfile" ):
+
+        print("Client Send File")
+
+        name = form[1]
+
+        size = int( form[2] )
+
+        f = open( StdDir + name, 'wb+')
 
         s.send("ack".encode())
 
+        while(size > 0 ):
+
+            data = s.recv(1024)
+
+            f.write(data)
+
+            size -= len(data)
+
+            s.send("ack".encode())
+
+        f.close()
+
     else:
+        
         s.send("Command not found".encode())
 
     s.close()
@@ -27,29 +49,17 @@ if __name__ == "__main__":
     socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socket_server.bind(("0.0.0.0", Port))
     socket_server.listen(10)
-    socket_server.setblocking(0)
-
-    socket_list = []
-    socket_list.append(socket_server)
 
     ports = {}
 
     while True:
+       
+        s, addr = socket_server.accept()
 
-        for s in socket_list:
-            if s.fileno() < 0:
-                socket_list.remove(s)
-                print("Client Closed: " + str(len(socket_list)-1))
+        print("Client From: " + str(addr))
 
-        rsock,_,_ = select.select(socket_list,[],[],5)
+        interface(s)
 
-        for s in rsock:
-            if s == socket_server:
-                ns,_ = s.accept()
-                ns.setblocking(0)
-                socket_list.append(ns)
-                print("New Client: " + str(len(socket_list)-1))
-            else:
-                interface(s)
+        print("Client Closed")
 
     pass
