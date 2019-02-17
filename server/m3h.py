@@ -7,6 +7,8 @@ IP = "localhost"
 Port = 5000
 StdDir = "Data/"
 
+# Send File
+
 def sendfile(form, s, data_base):
     name = form[1]
 
@@ -51,6 +53,15 @@ def sendfile(form, s, data_base):
 
     f.close()
 
+# Get Dir
+
+def getdir(dir, s, data_base):
+
+    pass
+
+
+# Manage Interfaces
+
 def interface(s, data_base):
 
     msg = s.recv(1024).decode()
@@ -64,6 +75,22 @@ def interface(s, data_base):
         sendfile(form, s, data_base)
 
         print("Done Sending")
+
+    elif( form[0] == "remove" ):
+
+        print("Client Remove File")
+
+        #removefile(form, s, data_base)
+
+        print("Done Removing")
+
+    elif( form[0] == "getdir" ):
+
+        print("Client GetDir File")
+
+        getdir( form[1], s, data_base)
+
+        print("Done GetDirs")
 
     else:
         

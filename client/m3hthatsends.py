@@ -74,6 +74,32 @@ if __name__ == "__main__":
 
             continue
 
+        if( lop[0] == "cd" ):
+
+            temp_dir = cur_dir
+
+            if lop[1].startswith("/"):
+                
+                temp_dir = lop[1]
+            
+            else:
+                
+                temp_dir += lop[1]
+
+            s.send("getdir " + temp_dir)
+
+            res = s.recv(1024).decode()
+
+            if (res != "nack"):
+                
+                cur_dir = temp_dir
+            
+            else:
+
+                print("Folder not Found")
+
+            continue
+
         if( lop[0] == "exit"):
 
             break
@@ -81,7 +107,7 @@ if __name__ == "__main__":
         print("comand " + op + " not found.")
 
     print("Closing connection")
-    
+
     s.close()
     
     pass
