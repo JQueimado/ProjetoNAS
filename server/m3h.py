@@ -55,7 +55,50 @@ def sendfile(form, s, data_base):
 
 # Get Dir
 
-def getdir(dir, s, data_base):
+def getdir(dirs, s, data_base):
+
+    if dirs.startswith("/"):
+        dirs = "root" + dirs
+
+    dirs = dirs.split("/")
+
+    print (dirs)
+
+    # resolts for dirs 
+
+    curssor1 = data_base.cursor()
+
+    curssor1.execute(
+        "SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON m.dirloc = e.dircode WHERE e.dirname = '" + dirs[len(dirs) - 2] + "';"
+    )
+
+    res1 = curssor1.fetchall()
+
+    # resolts for files 
+
+    curssor2 = data_base.cursor()
+
+    curssor2. execute("SELECT fname FROM Dirs NATURAL JOIN Files WHERE dirname = '" + dirs[len(dirs) - 2] + "';")
+    
+    res2 = curssor2.fetchall()
+
+    # join results 
+
+    if len(res1) == 0 and len(res2) == 0:
+        s.send("nack".encode())
+        return
+
+    res = ""
+
+    for r in res1:
+        res += r[0] + " "
+
+    for r in res2:
+        res += r[0] + " "    
+
+    print(res)
+
+    s.send(res.encode())
 
     pass
 
