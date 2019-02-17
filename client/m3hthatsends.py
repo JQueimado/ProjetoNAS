@@ -79,24 +79,31 @@ if __name__ == "__main__":
             temp_dir = cur_dir
 
             if lop[1].startswith("/"):
-                
                 temp_dir = lop[1]
-            
             else:
-                
                 temp_dir += lop[1]
 
-            s.send("getdir " + temp_dir)
+            dir_arr = temp_dir.split("/")
 
-            res = s.recv(1024).decode()
+            dir_send = "/"
 
-            if (res != "nack"):
+            flag = True
+
+            for d in dir_arr:
+                dir_send += d + "/"
+
+                s.send( ("getdir " + dir_send).encode() )
+
+                res = s.recv(1024).decode()
+
+                if res == "nack":
+                    flag = False
+                    break 
                 
+            if flag:
                 cur_dir = temp_dir
-            
             else:
-
-                print("Folder not Found")
+                print("Dir Not Found")
 
             continue
 
@@ -109,13 +116,13 @@ if __name__ == "__main__":
             continue
 
         if( lop[0] == "exit"):
+            
+            s.send("exit".encode())
 
             break
 
         print("comand " + op + " not found.")
 
     print("Closing connection")
-
-    s.close()
     
     pass

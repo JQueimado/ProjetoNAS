@@ -62,8 +62,6 @@ def getdir(dirs, s, data_base):
 
     dirs = dirs.split("/")
 
-    print (dirs)
-
     # resolts for dirs 
 
     curssor1 = data_base.cursor()
@@ -95,8 +93,6 @@ def getdir(dirs, s, data_base):
 
     for r in res2:
         res += r[0] + " "    
-
-    print(res)
 
     s.send(res.encode())
 
@@ -135,11 +131,13 @@ def interface(s, data_base):
 
         print("Done GetDirs")
 
+    elif form[0] == "exit":
+
+        s.close()
+
     else:
         
         s.send("Command not found".encode())
-
-    s.close()
 
     pass
 
@@ -180,7 +178,15 @@ if __name__ == "__main__":
 
         print("Client From: " + str(addr))
 
-        interface(s, data_base)
+        try:
+
+            while True:
+
+                interface(s, data_base)
+
+        except:
+
+            pass
 
         print("Client Closed")
 
