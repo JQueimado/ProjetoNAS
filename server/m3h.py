@@ -1,6 +1,7 @@
 import socket
 import select
 import os
+import mysql.connector 
 
 IP = "localhost"
 Port = 5000
@@ -57,6 +58,18 @@ if __name__ == "__main__":
     socket_server.listen(10)
 
     ports = {}
+
+    # data base #
+
+    data_base = mysql.connector.connect(
+
+        host = "localhost",
+        user = "bot",
+        passwd = "botpass"
+
+    )
+
+    print(data_base)
 
     # dirs #
 
