@@ -78,12 +78,20 @@ if __name__ == "__main__":
 
             temp_dir = cur_dir
 
+            if lop[1].startswith(".."):
+                t = cur_dir.split("/")
+                t.remove("")
+                t = t[:-1]
+                cur_dir = "/".join(t) + "/"
+
             if lop[1].startswith("/"):
                 temp_dir = lop[1]
             else:
                 temp_dir += lop[1]
 
             dir_arr = temp_dir.split("/")
+
+            dir_arr.remove("")
 
             dir_send = "/"
 
@@ -92,16 +100,21 @@ if __name__ == "__main__":
             for d in dir_arr:
                 dir_send += d + "/"
 
-                s.send( ("getdir " + dir_send).encode() )
+                s.send( ("getdir " + dir_send)[:-1].encode() )
 
                 res = s.recv(1024).decode()
 
                 if res == "nack":
                     flag = False
                     break 
+                else:
+                    res = res.split(" ")
+                    res.remove("")
+
+                    if 
                 
             if flag:
-                cur_dir = temp_dir
+                cur_dir = temp_dir + "/"
             else:
                 print("Dir Not Found")
 
