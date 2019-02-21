@@ -62,34 +62,70 @@ def getdir(dirs, s, data_base):
 
     dirs = dirs.split("/")
 
+    while "" in dirs:
+        dirs.remove("")
+
     # resolts for dirs 
 
     curssor1 = data_base.cursor()
 
     curssor1.execute(
-        "SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON m.dirloc = e.dircode WHERE e.dirname = '" + dirs[len(dirs) - 2] + "';"
+        "SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON m.dirloc = e.dircode WHERE e.dirname = 'root';"
+    )
+
+    r = curssor1.fetchall()
+
+    ls = []
+
+    for i in r:
+        
+        ls.append(i[0])
+
+    for i in range(1,len(dirs)):
+
+        if not dirs[i] in ls:
+            
+            s.send("nack".encode())
+            
+            return
+        
+        else:
+
+            curssor1.execute(
+                "SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON m.dirloc = e.dircode WHERE e.dirname = '" + dirs[i] + "';"
+            )
+
+            r = curssor1.fetchall()
+
+            ls = []
+
+            for i in r:
+                ls.append(i[0])
+
+    # get res to dirs #
+
+    curssor1.execute(
+        "SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON m.dirloc = e.dircode WHERE e.dirname = '" + dirs[len(dirs) - 1] + "';"
     )
 
     res1 = curssor1.fetchall()
 
-    # resolts for files 
+    curssor1.execute(
+        "SELECT fname FROM Dirs NATURAL JOIN Files WHERE dirname = '" + dirs[len(dirs) - 1] + "';"
+    )
 
-    curssor2 = data_base.cursor()
-
-    curssor2. execute("SELECT fname FROM Dirs NATURAL JOIN Files WHERE dirname = '" + dirs[len(dirs) - 2] + "';")
-    
-    res2 = curssor2.fetchall()
+    res2 = curssor1.fetchall()
 
     # join results 
 
-    if len(res1) == 0 and len(res2) == 0:
-        s.send("nack".encode())
+    if len(res1) + len(res2) == 0:
+        s.send("Empty".encode())
         return
 
     res = ""
 
     for r in res1:
-        res += r[0] + " "
+        res += "/" + r[0] + " "
 
     for r in res2:
         res += r[0] + " "    
@@ -184,9 +220,9 @@ if __name__ == "__main__":
 
                 interface(s, data_base)
 
-        except:
+        except Exception as e:
 
-            pass
+            print(e)
 
         print("Client Closed")
 

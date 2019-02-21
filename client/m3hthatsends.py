@@ -76,52 +76,50 @@ if __name__ == "__main__":
 
         if( lop[0] == "cd" ):
 
-            temp_dir = cur_dir
+            # go back #
 
-            if lop[1].startswith(".."):
+            if lop[1].startswith("..") :
+
                 t = cur_dir.split("/")
-                t.remove("")
-                t = t[:-1]
-                cur_dir = "/".join(t) + "/"
+
+                while "" in t:
+                    t.remove("")
+
+                cur_dir = "/"
+
+                if len(t) != 1:
+                    for i in range(0, len(t) - 2):
+                        cur_dir += "/" + t[i]
+
+                lop[1] = (lop[1])[2:]
+
+                if lop[1].startswith("/"):
+                    lop[1] = (lop[1])[1:]
+
+                if len(lop[1]) == 0:
+                    lop[1] = "/"
+
+            temp_dir = cur_dir
 
             if lop[1].startswith("/"):
                 temp_dir = lop[1]
             else:
                 temp_dir += lop[1]
 
-            dir_arr = temp_dir.split("/")
+            s.send( ("getdir " + temp_dir).encode() )
 
-            dir_arr.remove("")
+            res = s.recv(1024).decode()
 
-            dir_send = "/"
+            if res == "nack":
+                print("Dir not found")
+                continue
 
-            flag = True
-
-            for d in dir_arr:
-                dir_send += d + "/"
-
-                s.send( ("getdir " + dir_send)[:-1].encode() )
-
-                res = s.recv(1024).decode()
-
-                if res == "nack":
-                    flag = False
-                    break 
-                else:
-                    res = res.split(" ")
-                    res.remove("")
-
-                    if 
-                
-            if flag:
-                cur_dir = temp_dir + "/"
-            else:
-                print("Dir Not Found")
+            cur_dir = temp_dir
 
             continue
 
         if( lop[0] == "ls"):
-            
+
             s.send( ("getdir " + cur_dir).encode() )
             
             print(s.recv(1024).decode())
