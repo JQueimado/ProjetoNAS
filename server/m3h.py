@@ -171,7 +171,7 @@ def interface(s, data_base):
 
     form = msg.split(' ')
 
-    if( form[0] == "sendfile" ):
+    if( form[0] == "sdf" ):
 
         print("Client Send File")
 
@@ -179,7 +179,7 @@ def interface(s, data_base):
 
         print("Done Sending")
 
-    elif( form[0] == "remove" ):
+    elif( form[0] == "rm" ):
 
         print("Client Remove File")
 
