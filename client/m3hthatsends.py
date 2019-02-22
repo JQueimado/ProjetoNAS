@@ -68,13 +68,13 @@ if __name__ == "__main__":
 
         lop = op.split(" ")
 
-        if( lop[0] == "sendfile" ):
+        if( lop[0] == "sdf" ):
 
             sendfile(lop[1], s)
 
             continue
 
-        if ( lop[0] == "remove"):
+        if ( lop[0] == "rm"):
 
             f = lop[1].split("/")
 
