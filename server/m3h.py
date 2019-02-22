@@ -111,7 +111,7 @@ def getdir(dirs, s, data_base):
     res1 = curssor1.fetchall()
 
     curssor1.execute(
-        "SELECT fname FROM Dirs NATURAL JOIN Files WHERE dirname = '" + dirs[len(dirs) - 1] + "';"
+        "SELECT fname FROM Dirs JOIN Files WHERE dircode = floc AND dirname = '" + dirs[len(dirs) - 1] + "';"
     )
 
     res2 = curssor1.fetchall()
@@ -134,6 +134,34 @@ def getdir(dirs, s, data_base):
 
     pass
 
+def removefile(form, s, data_base):
+
+    if (form[1].startswith("/")):
+        form[1] = "root" + form[1]
+
+    dr = form[1].split("/")
+
+    while "" in dr:
+        dr.remove("")
+
+    print(dr)
+
+    d = dr[len(dr) - 2]
+    n = dr[len(dr) - 1]
+
+    cusrsor = data_base.cursor()
+
+    cusrsor.execute("SELECT id FROM Dirs JOIN Files WHERE dircode = floc AND dirname = '"+d+"' AND fname = '"+n+"';" )
+
+    res = cusrsor.fetchall()
+
+    print (res)
+
+    for r in res:
+        cusrsor.execute("UPDATE Files SET floc = '001' WHERE id = '" + r[0] + "';")
+    data_base.commit()
+
+    s.send("ack".encode())
 
 # Manage Interfaces
 
@@ -155,7 +183,7 @@ def interface(s, data_base):
 
         print("Client Remove File")
 
-        #removefile(form, s, data_base)
+        removefile(form, s, data_base)
 
         print("Done Removing")
 

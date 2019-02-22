@@ -1,4 +1,5 @@
 
+DROP TABLE IF EXISTS Files;
 DROP TABLE IF EXISTS Dirs;
 
 CREATE TABLE Dirs (
@@ -10,16 +11,14 @@ CREATE TABLE Dirs (
 
 );
 
-DROP TABLE IF EXISTS Files;
-
 CREATE TABLE Files (
 
     id CHAR(3),
     fname VARCHAR(25),
-    dircode CHAR(3),
-    PRIMARY KEY (id),
-    FOREIGN KEY (dircode) REFERENCES Dirs(dircode)
+    floc CHAR(3),
+    PRIMARY KEY (id)
 
 );
 
 INSERT INTO Dirs VALUES ('000','root','000');
+INSERT INTO Dirs VALUES ('001','trash','000');

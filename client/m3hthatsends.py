@@ -74,7 +74,64 @@ if __name__ == "__main__":
 
             continue
 
+        if ( lop[0] == "remove"):
+
+            f = lop[1].split("/")
+
+            fname = f[len(f) - 1]
+            f.pop(len(f) - 1)
+
+            d = ""
+
+            for c in f:
+                d += "/" + c
+
+            if len(f) == 0:
+                if cur_dir.endswith("/"):
+                    d = cur_dir + d
+                else:
+                    d = cur_dir + "/" + d
+            
+            s.send(("getdir " + d).encode())
+
+            res = s.recv(1024).decode()
+
+            if res == "nack" or res == "Empty" or not fname in res.split(" "):
+                print("File or Directory not Found")
+                continue
+
+            rd = "remove "
+
+            f = lop[1].split("/")
+
+            while "" in f:
+                f.remove("")
+
+            if len(f) == 1:
+
+                temp = cur_dir
+
+                if cur_dir == "/":
+                    temp = ""
+
+                rd +=  temp + "/" + fname
+            else:
+                rd += lop[1]
+
+            s.send(rd.encode())
+
+            res = s.recv(1024).decode()
+
+            if res == "nack":
+                print("Error Found")
+                continue
+
+            print("Deleted "+ lop[1])
+            continue
+
         if( lop[0] == "cd" ):
+            lop[1] = lop[1].replace("root/","/")
+            lop[1] = lop[1].replace("root","/")
 
             # go back #
 
