@@ -189,6 +189,19 @@ if __name__ == "__main__":
 
             break
 
+        if( lop[0] == "empty"):
+
+            s.send("empty")
+
+            res = s.recv(1024).decode()
+
+            if res == "ack":
+                print("Trash Emptied")
+            else:
+                print("Error: Could not Empy Trash")
+
+            break
+
         print("comand " + op + " not found.")
 
     print("Closing connection")

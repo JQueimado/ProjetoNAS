@@ -10,7 +10,26 @@ StdDir = "Data/"
 # Send File
 
 def sendfile(form, s, data_base):
-    name = form[1]
+    
+    t = form[1].split("/")
+
+    while "" in t:
+        t.remove("")
+
+    name = t[len(t-1)]
+
+    t.pop(len(t-1))
+
+    cursor = data_base.cursor()
+
+    cursor.execute("SELECT m.dirname FROM Dirs e INNER JOIN Dirs m ON e.dircode = m.dirloc WHERE e.dirname = 'root';")
+
+    res = cursor.fetchall()
+
+    dirs = []
+
+    for r in res:
+        dirs.append(r[0])
 
     size = int( form[2] )
 
@@ -37,7 +56,7 @@ def sendfile(form, s, data_base):
 
     #recv file
 
-    f = open( StdDir + name, 'wb+')
+    f = open( StdDir + ic + "-" + name, 'wb+')
 
     s.send("ack".encode())
 
@@ -163,6 +182,25 @@ def removefile(form, s, data_base):
 
     s.send("ack".encode())
 
+#empty trash
+
+def empty(s, data_base):
+    
+    cursor = data_base.cursor()
+
+    cursor.execute("SELECT id, fname FROM Files WHERE floc = '001';")
+
+    temp = cursor.fetchall()
+
+    files = []
+
+    for r in temp:
+        files.append( str(r[0]) + "-" + str(r[1]) )
+
+    print(files)
+    
+    pass
+
 # Manage Interfaces
 
 def interface(s, data_base):
@@ -198,6 +236,14 @@ def interface(s, data_base):
     elif form[0] == "exit":
 
         s.close()
+
+    elif form[0] == "empty":
+        print("Client empty trash")
+
+        empty()
+
+        print("Trash Emptied")
+        pass
 
     else:
         
