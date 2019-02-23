@@ -4,7 +4,7 @@ sendfile <fileName.fileExt> -> triguers the file transfer protocol
 remove <fileName.fileExt> -> moves file to trash 
 mkdir <dirName> -> adds dir to database
 empty -> emptyies trash 
-getdir -> returns dir contents 
+getdir <dir> -> returns dir contents 
 
 
 ->transfer protocol<-
