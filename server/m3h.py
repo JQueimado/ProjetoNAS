@@ -240,7 +240,7 @@ def interface(s, data_base):
     elif form[0] == "empty":
         print("Client empty trash")
 
-        empty()
+        empty(s, data_base)
 
         print("Trash Emptied")
         pass

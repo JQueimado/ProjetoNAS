@@ -176,23 +176,17 @@ if __name__ == "__main__":
             continue
 
         if( lop[0] == "ls"):
-
             s.send( ("getdir " + cur_dir).encode() )
-            
+
             print(s.recv(1024).decode())
-            
             continue
 
         if( lop[0] == "exit"):
-            
             s.send("exit".encode())
-
             break
 
         if( lop[0] == "empty"):
-
-            s.send("empty")
-
+            s.send("empty".encode())
             res = s.recv(1024).decode()
 
             if res == "ack":
